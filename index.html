@@ -4,106 +4,191 @@
    <title>Календарь</title>
 </head>
 <style>
-    body {
-      background-color: rgba(139, 104, 104, 0.151)
+    *{
+    box-sizing: border-box;
     }
-    .look-calendar {
-      width:320px;
-      border:1px solid #c0c0c0;
-      padding:6px;
-      margin: 0 auto;
-      background-color: rgba(138, 85, 85, 0.151)  
+
+    body{
+        font-family: "Roboto", sans-serif;
     }
-    #calendar {
-      width: 100%;
-      line-height: 1.2em;
-      font-size: 25px;
-      text-align: center;
-      border-spacing:0px;
+
+    /* месяцы и годы */
+    #month-calendar{
+        width: 100%;
     }
-    #calendar tr.dn td {
-      font-size: 15px;
-      text-decoration: underline 
+
+    .month{
+        margin: 0;
+        padding: 3rem 2rem 2rem;
+        background: #555555;
+        text-align: center;
+        width: 100%;
+        color: #ffffff;
+        list-style: none;
     }
-    #calendar thead tr:last-child {
-      font-size: small;
-      color: #555555;
+
+    .month li{
+        padding: 0;
+        margin: 0;
+        font-size: 1.5rem;
+        line-height: 1.4;
+        letter-spacing: 0.1rem;
+        text-transform: uppercase;
+        font-weight: 700;
     }
-    #calendar thead tr:nth-child(1) td:nth-child(2) {
-      color: #323232;
-      font-weight: bold;
+
+    .month li.prev,
+    .month li.next{
+        cursor: pointer;
     }
-    #calendar thead tr:nth-child(1) td:nth-child(1):hover,
-    #calendar thead tr:nth-child(1) td:nth-child(3):hover {
-      cursor: pointer;
+
+    .month li.prev{
+        float: left;
     }
-    #calendar tbody td {
-      color: #2c567a;
+
+    .month li.next{
+        float: right;
     }
-    #calendar tbody td:nth-child(n+6),
-    #calendar .holiday {
-      color: #e78c5c;
+
+    .month li.year-name{
+        font-size: 1.2rem;
+        font-weight: 400;
     }
-    #calendar tbody td.today {
-      background: #dc00005e;
-      color: #fff;
+
+    /* дни недели */
+    .weekdays{
+        margin: 0;
+        padding: 1rem 0;
+        background-color: #dddddd;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: left;
+    }
+
+    .weekdays li{
+        display: inline-block;
+        flex: 0 0 calc(100% / 7);
+        text-align: center;
+    }
+
+    /* дни */
+    .days{
+        margin: 0;
+        padding: 1rem 0;
+        background-color: #eeeeee;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: left;
+        align-content: flex-start;
+        height: 14rem;
+    }
+
+    .days li{
+        padding: 0.5rem;
+        list-style: none;
+        display: inline-block;
+        flex: 0 0 calc(100% / 7);
+        text-align: center;
+        color: #999;
+        font-size: 0.9rem;
+        line-height: 1rem;
+    }
+
+    .days li.date-now{
+        color: #000;
+        font-weight: 700;
     }
   </style>
 <body>
-    <div class="look-calendar">
-        <table id="calendar">
-          <thead>
-          <tr>
-          <td><b>‹</b>
-          <td colspan="5">
-          <td><b>›</b>
-          <tr class="dn"><td>Пн<td>Вт<td>Ср<td>Чт<td>Пт<td>Сб<td>Вс
-          </thead>
-          <tbody></tbody>
-        </table>
-        </div>
+    <div id="month-calendar">
+        <ul class="month">
+            <li class="prev"><i class="fas fa-angle-double-left"></i></li>
+            <li class="next"><i class="fas fa-angle-double-right"></i></li>
+            <li class="month-name"></li>
+            <li class="year-name"></li>
+        </ul>
+        <ul class="weekdays">
+            <li>Пн</li>
+            <li>Вт</li>
+            <li>Ср</li>
+            <li>Чт</li>
+            <li>Пт</li>
+            <li>Сб</li>
+            <li>Вс</li>
+        </ul>
+        <ul class="days">
+        </ul>
+    </div>
+    <script src="arrow.js"></script>
         <script>
-            function calendar(id, year, month) {
-              var Dlast = new Date(year, month + 1, 0).getDate(),
-                D = new Date(year, month, Dlast),
-                DNlast = new Date(D.getFullYear(), D.getMonth(), Dlast).getDay(),
-                DNfirst = new Date(D.getFullYear(), D.getMonth(), 1).getDay(),
-                calendar = '<tr>',
-                month = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-              if (DNfirst != 0) {
-                for (var i = 1; i < DNfirst; i++) calendar += '<td>';
-              } else {
-                 for (var i = 0; i < 6; i++) calendar += '<td>';
-              }
-              for (var i = 1; i <= Dlast; i++) {
-                 if (i == new Date().getDate() && D.getFullYear() == new Date().getFullYear() && D.getMonth() == new Date().getMonth()) {
-                  calendar += '<td class="today">' + i;
-                 } else {
-                   calendar += '<td>' + i;
-                 }
-                 if (new Date(D.getFullYear(), D.getMonth(), i).getDay() == 0) {
-                   calendar += '<tr>';
-                 }
-              }
-              for (var i = DNlast; i < 7; i++) calendar += '<td> ';
-              document.querySelector('#' + id + ' tbody').innerHTML = calendar;
-              document.querySelector('#' + id + ' thead td:nth-child(2)').innerHTML = month[D.getMonth()] + ' ' + D.getFullYear();
-              document.querySelector('#' + id + ' thead td:nth-child(2)').dataset.month = D.getMonth();
-              document.querySelector('#' + id + ' thead td:nth-child(2)').dataset.year = D.getFullYear();
-              if (document.querySelectorAll('#' + id + ' tbody tr').length < 6) { 
-                  // чтобы при перелистывании месяцев не "подпрыгивала" вся страница, добавляется ряд пустых клеток. Итог: всегда 6 строк для цифр
-              document.querySelector('#' + id + ' tbody').innerHTML += '<tr><td> <td> <td> <td> <td> <td> <td> ';
-              }
+            let nowDate = new Date(), // создаем экземпляра объекта с текущей датой
+                nowDateNumber = nowDate.getDate(),  // возвращает текущую дату
+                nowMonth = nowDate.getMonth(), // возвращает номер месяца (значение от 0 до 11. Январь равен 0)
+                nowYear = nowDate.getFullYear(), // возвращает год в четырехзначном формате
+                container = document.getElementById('month-calendar'),
+                monthContainer = container.getElementsByClassName('month-name')[0],
+                yearContainer = container.getElementsByClassName('year-name')[0],
+                daysContainer = container.getElementsByClassName('days')[0],
+                prev = container.getElementsByClassName('prev')[0],
+                next = container.getElementsByClassName('next')[0],
+                monthName = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+
+            let curDate = nowDate.setMonth(nowDate.getMonth() - 1);
+            //console.log(nowDate.getFullYear());
+
+            function setMonthCalendar(year,month) {
+                let monthDays = new Date(year, month + 1, 0).getDate(), // возвращает количество дней в выбранном месяце
+                    monthPrefix = new Date(year, month, 0).getDay(), // getDay() возвращает номер дня недели
+                    monthDaysText = '';
+
+                monthContainer.textContent = monthName[month];
+                yearContainer.textContent = year;
+                daysContainer.innerHTML = '';
+
+                if (monthPrefix > 0){
+                    for (let i = 1  ; i <= monthPrefix; i++){
+                        monthDaysText += '<li></li>';
+                    }
+                }
+
+                for (let i = 1; i <= monthDays; i++){
+                    monthDaysText += '<li>' + i + '</li>';
+                }
+
+                daysContainer.innerHTML = monthDaysText;
+
+                if (month == nowMonth && year == nowYear){
+                    days = daysContainer.getElementsByTagName('li');
+                    days[monthPrefix + nowDateNumber - 1].classList.add('date-now');
+                }
             }
-            calendar("calendar", new Date().getFullYear(), new Date().getMonth());
-                  // переключатель минус месяц
-            document.querySelector('#calendar thead tr:nth-child(1) td:nth-child(1)').onclick = function() {
-              calendar("calendar", document.querySelector('#calendar thead td:nth-child(2)').dataset.year, parseFloat(document.querySelector('#calendar thead td:nth-child(2)').dataset.month) - 1);
+
+            setMonthCalendar(nowYear,nowMonth);
+
+            prev.onclick = function () {
+                let curDate = new Date(yearContainer.textContent,monthName.indexOf(monthContainer.textContent));
+
+                curDate.setMonth(curDate.getMonth() - 1); // смещает дату на месяц назад
+
+                let curYear = curDate.getFullYear(),
+                    curMonth = curDate.getMonth();
+
+                setMonthCalendar(curYear,curMonth);
             }
-                  // переключатель плюс месяц
-            document.querySelector('#calendar thead tr:nth-child(1) td:nth-child(3)').onclick = function() {
-              calendar("calendar", document.querySelector('#calendar thead td:nth-child(2)').dataset.year, parseFloat(document.querySelector('#calendar thead td:nth-child(2)').dataset.month) + 1);
+
+            next.onclick = function () {
+                let curDate = new Date(yearContainer.textContent,monthName.indexOf(monthContainer.textContent));
+
+                curDate.setMonth(curDate.getMonth() + 1); // смещает дату на месяц вперед
+
+                let curYear = curDate.getFullYear(),
+                    curMonth = curDate.getMonth();
+
+                setMonthCalendar(curYear,curMonth);
             }
           </script>
-</body>
+    </body>
 </html>
